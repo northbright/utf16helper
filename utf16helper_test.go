@@ -2,6 +2,8 @@ package utf16helper_test
 
 import (
 	"bytes"
+	"encoding/binary"
+	"fmt"
 	"log"
 
 	"github.com/northbright/utf16helper"
@@ -28,4 +30,35 @@ func ExampleReadUTF16BOM() {
 	}
 
 	// Output:
+}
+
+func ExampleWriteUTF16BOM() {
+	orders := []binary.ByteOrder{
+		binary.LittleEndian,
+		binary.BigEndian,
+		// No order
+		nil,
+	}
+
+	for _, order := range orders {
+		buf := &bytes.Buffer{}
+
+		err := utf16helper.WriteUTF16BOM(order, buf)
+		if err != nil && err != utf16helper.ErrNoBOM {
+			log.Printf("WriteUTF16BOM() error: %v", err)
+			return
+		}
+
+		if err != utf16helper.ErrNoBOM {
+			fmt.Printf("written BOM: 0x%X\n", buf.Bytes())
+		} else {
+			fmt.Printf("no BOM\n")
+		}
+
+	}
+
+	// Output:
+	// written BOM: 0xFFFE
+	// written BOM: 0xFEFF
+	// no BOM
 }
