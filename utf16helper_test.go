@@ -54,11 +54,25 @@ func ExampleWriteUTF16BOM() {
 		} else {
 			fmt.Printf("no BOM\n")
 		}
-
 	}
 
 	// Output:
 	// written BOM: 0xFFFE
 	// written BOM: 0xFEFF
 	// no BOM
+}
+
+func ExampleWriteUTF8BOM() {
+	buf := &bytes.Buffer{}
+
+	err := utf16helper.WriteUTF8BOM(buf)
+	if err != nil {
+		log.Printf("WriteUTF8BOM() error: %v", err)
+		return
+	}
+
+	fmt.Printf("written BOM: 0x%X\n", buf.Bytes())
+
+	// Output:
+	// written BOM: 0xEFBBBF
 }
