@@ -2,6 +2,7 @@ package utf16helper_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"fmt"
 	"log"
@@ -75,4 +76,24 @@ func ExampleWriteUTF8BOM() {
 
 	// Output:
 	// written BOM: 0xEFBBBF
+}
+
+func ExampleUTF8ToUTF16Ctx() {
+	// Get an empty context.
+	ctx := context.Background()
+	// "Hello, 世界!" in UTF8 with BOM(written in Notepad.exe on Windows).
+	utf8Bytes := []byte{0xEF, 0xBB, 0xBF, 0x48, 0x65, 0x6c, 0x6c, 0x6f,
+		0x2c, 0x20, 0xe4, 0xb8, 0x96, 0xe7, 0x95, 0x8c, 0x21}
+	buf := []byte{}
+
+	reader := bytes.NewReader(utf8Bytes)
+	writer := bytes.NewBuffer(buf)
+
+	if err := utf16helper.UTF8ToUTF16Ctx(ctx, reader, writer); err != nil {
+		log.Printf("UTF8ToUTF16Ctx() error: %v", err)
+		return
+	}
+
+	log.Printf("%X\n", writer.Bytes())
+	// Output:
 }
