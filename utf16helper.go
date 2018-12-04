@@ -80,21 +80,23 @@ func RuneToUTF16Bytes(r rune) []byte {
 	return b[0:2]
 }
 
-func UTF8ToUTF16Ctx(ctx context.Context, src io.Reader, dst io.Writer, outputUTF16BOM bool) error {
+func UTF8ToUTF16Ctx(ctx context.Context, src io.Reader, dst io.Writer) error {
 	reader := bufio.NewReader(src)
 	writer := bufio.NewWriter(dst)
 
-	if outputUTF16BOM {
-		if err := WriteUTF16BOM(byteorder.Get(), writer); err != nil {
-			return err
-		}
+	if err := WriteUTF16BOM(byteorder.Get(), writer); err != nil {
+		return err
 	}
 
 	// Read first rune and check if it is UTF-8 BOM.
 	r, _, err := reader.ReadRune()
 	if err != nil {
+		if err == io.EOF {
+			return nil
+		}
 		return err
 	}
+
 	// If first rune is NOT UTF-8 BOM(0xEF,0xBB,0xBF -> rune: 0xFEFF),
 	// convert it to UTF-16 bytes, write the bytes.
 	if r != 0xFEFF {
@@ -113,6 +115,9 @@ func UTF8ToUTF16Ctx(ctx context.Context, src io.Reader, dst io.Writer, outputUTF
 
 		r, _, err := reader.ReadRune()
 		if err != nil {
+			if err == io.EOF {
+				break
+			}
 			return err
 		}
 
