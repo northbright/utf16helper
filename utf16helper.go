@@ -20,6 +20,8 @@ var (
 	ErrNoUTF16BOM = fmt.Errorf("No UTF-16 BOM found")
 )
 
+// DetectUTF16BOM detects the byte order in the BOM.
+// It returns nil , ErrNoUTF16BOM if no byte order detected in the BOM.
 func DetectUTF16BOM(r io.Reader) (binary.ByteOrder, error) {
 	var buf []byte
 
@@ -44,6 +46,7 @@ func DetectUTF16BOM(r io.Reader) (binary.ByteOrder, error) {
 	}
 }
 
+// WriteUTF16BOM writes the UTF16 BOM to the writer according to the byte order.
 func WriteUTF16BOM(order binary.ByteOrder, dst io.Writer) error {
 	var BOM []byte
 
@@ -65,6 +68,7 @@ func WriteUTF16BOM(order binary.ByteOrder, dst io.Writer) error {
 	return nil
 }
 
+// WriteUTF8BOM writes the UTF8 BOM to the writer.
 func WriteUTF8BOM(dst io.Writer) error {
 	_, err := dst.Write(UTF8BOM[0:3])
 	if err != nil {
@@ -73,12 +77,14 @@ func WriteUTF8BOM(dst io.Writer) error {
 	return nil
 }
 
+// RuneToUTF16Bytes converts rune to UTF16 bytes.
 func RuneToUTF16Bytes(r rune) []byte {
 	utf16Buf := utf16.Encode([]rune{r})
 	b := (*[2]byte)(unsafe.Pointer(&utf16Buf[0]))
 	return b[0:2]
 }
 
+// UTF8ToUTF16Ctx converts UTF8 to UTF16 with context support.
 func UTF8ToUTF16Ctx(ctx context.Context, src io.Reader, dst io.Writer) error {
 	reader := bufio.NewReader(src)
 	writer := bufio.NewWriter(dst)
@@ -129,10 +135,12 @@ func UTF8ToUTF16Ctx(ctx context.Context, src io.Reader, dst io.Writer) error {
 	return writer.Flush()
 }
 
+// UTF8ToUTF16 converts UTF8 to UTF16.
 func UTF8ToUTF16(src io.Reader, dst io.Writer) error {
 	return UTF8ToUTF16Ctx(context.Background(), src, dst)
 }
 
+// UTF16ToUTF8Ctx converts UTF16 to UTF8 with context support.
 func UTF16ToUTF8Ctx(ctx context.Context, src io.Reader, dst io.Writer, outputUTF8BOM bool) error {
 	var (
 		buf       = make([]byte, 2)
@@ -187,6 +195,7 @@ func UTF16ToUTF8Ctx(ctx context.Context, src io.Reader, dst io.Writer, outputUTF
 	return writer.Flush()
 }
 
+// UTF16ToUTF8Ctx converts UTF16 to UTF8.
 func UTF16ToUTF8(src io.Reader, dst io.Writer, outputUTF8BOM bool) error {
 	return UTF16ToUTF8Ctx(context.Background(), src, dst, outputUTF8BOM)
 }
