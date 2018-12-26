@@ -2,7 +2,6 @@ package utf16helper
 
 import (
 	"bufio"
-	//	"bytes"
 	"context"
 	"encoding/binary"
 	"fmt"
