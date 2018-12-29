@@ -66,8 +66,7 @@ func WriteUTF16BOM(order binary.ByteOrder, dst io.Writer) error {
 		return ErrNoUTF16BOM
 	}
 
-	_, err := dst.Write(BOM)
-	if err != nil {
+	if _, err := dst.Write(BOM); err != nil {
 		return err
 	}
 	return nil
@@ -75,8 +74,7 @@ func WriteUTF16BOM(order binary.ByteOrder, dst io.Writer) error {
 
 // WriteUTF8BOM writes the UTF-8 BOM to the writer.
 func WriteUTF8BOM(dst io.Writer) error {
-	_, err := dst.Write(UTF8BOM[0:3])
-	if err != nil {
+	if _, err := dst.Write(UTF8BOM[0:3]); err != nil {
 		return err
 	}
 	return nil
