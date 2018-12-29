@@ -2,6 +2,7 @@ package utf16helper
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"encoding/binary"
 	"fmt"
@@ -198,4 +199,16 @@ func UTF16ToUTF8Ctx(ctx context.Context, src io.Reader, dst io.Writer, outputUTF
 // UTF16ToUTF8Ctx converts UTF16 to UTF8.
 func UTF16ToUTF8(src io.Reader, dst io.Writer, outputUTF8BOM bool) error {
 	return UTF16ToUTF8Ctx(context.Background(), src, dst, outputUTF8BOM)
+}
+
+func UTF16ToStringCtx(ctx context.Context, src io.Reader) (string, error) {
+	buffer := bytes.NewBuffer([]byte{})
+	if err := UTF16ToUTF8Ctx(ctx, src, buffer, false); err != nil {
+		return "", err
+	}
+	return buffer.String(), nil
+}
+
+func UTF16ToString(src io.Reader) (string, error) {
+	return UTF16ToStringCtx(context.Background(), src)
 }

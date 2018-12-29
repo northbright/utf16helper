@@ -142,3 +142,24 @@ func ExampleUTF16ToUTF8Ctx() {
 	log.Printf("string: %s", writer.String())
 	// Output:
 }
+
+func ExampleUTF16ToStringCtx() {
+	// Get an empty context.
+	ctx := context.Background()
+	// "Hello, 世界!" in UTF16 with UTF16LE(written in Notepad.exe on Windows).
+	utf16Bytes := []byte{0xFF, 0xFE, 0x48, 0x00, 0x65, 0x00, 0x6c, 0x00, 0x6c, 0x00,
+		0x6f, 0x00, 0x2c, 0x00, 0x20, 0x00, 0x16, 0x4e, 0x4c, 0x75, 0x21, 0x00}
+
+	// Create a bytes reader(io.Reader) from UTF16 bytes.
+	reader := bytes.NewReader(utf16Bytes)
+
+	str, err := utf16helper.UTF16ToStringCtx(ctx, reader)
+	if err != nil {
+		log.Printf("UTF16ToStringCtx() error: %v", err)
+		return
+	}
+
+	// Output string converted from UTF8 bytes.
+	log.Printf("string: %s", str)
+	// Output:
+}
