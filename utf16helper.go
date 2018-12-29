@@ -15,9 +15,13 @@ import (
 )
 
 var (
-	UTF16LE       = [2]byte{0xFF, 0xFE}
-	UTF16BE       = [2]byte{0xFE, 0xFF}
-	UTF8BOM       = [3]byte{0xEF, 0xBB, 0xBF}
+	// UTF16LE is the BOM for UTF-16LE.
+	UTF16LE = [2]byte{0xFF, 0xFE}
+	// UTF16BE is the BOM for UTF-16BE.
+	UTF16BE = [2]byte{0xFE, 0xFF}
+	// UTF8BOM is the BOM for UTF-8.
+	UTF8BOM = [3]byte{0xEF, 0xBB, 0xBF}
+	// ErrNoUTF16BOM represents the error that no UTF-16 BOM found.
 	ErrNoUTF16BOM = fmt.Errorf("No UTF-16 BOM found")
 )
 
@@ -69,7 +73,7 @@ func WriteUTF16BOM(order binary.ByteOrder, dst io.Writer) error {
 	return nil
 }
 
-// WriteUTF8BOM writes the UTF8 BOM to the writer.
+// WriteUTF8BOM writes the UTF-8 BOM to the writer.
 func WriteUTF8BOM(dst io.Writer) error {
 	_, err := dst.Write(UTF8BOM[0:3])
 	if err != nil {
@@ -78,14 +82,14 @@ func WriteUTF8BOM(dst io.Writer) error {
 	return nil
 }
 
-// RuneToUTF16Bytes converts rune to UTF16 bytes.
+// RuneToUTF16Bytes converts rune to UTF-16 bytes.
 func RuneToUTF16Bytes(r rune) []byte {
 	utf16Buf := utf16.Encode([]rune{r})
 	b := (*[2]byte)(unsafe.Pointer(&utf16Buf[0]))
 	return b[0:2]
 }
 
-// UTF8ToUTF16Ctx converts UTF8 to UTF16 with context support.
+// UTF8ToUTF16Ctx converts UTF-8 stream to UTF-16 stream with context support.
 func UTF8ToUTF16Ctx(ctx context.Context, src io.Reader, dst io.Writer) error {
 	reader := bufio.NewReader(src)
 	writer := bufio.NewWriter(dst)
@@ -136,12 +140,12 @@ func UTF8ToUTF16Ctx(ctx context.Context, src io.Reader, dst io.Writer) error {
 	return writer.Flush()
 }
 
-// UTF8ToUTF16 converts UTF8 to UTF16.
+// UTF8ToUTF16 converts UTF-8 stream to UTF-16 stream.
 func UTF8ToUTF16(src io.Reader, dst io.Writer) error {
 	return UTF8ToUTF16Ctx(context.Background(), src, dst)
 }
 
-// UTF16ToUTF8Ctx converts UTF16 to UTF8 with context support.
+// UTF16ToUTF8Ctx converts UTF-16 stream to UTF-8 stream with context support.
 func UTF16ToUTF8Ctx(ctx context.Context, src io.Reader, dst io.Writer, outputUTF8BOM bool) error {
 	var (
 		buf       = make([]byte, 2)
@@ -196,11 +200,12 @@ func UTF16ToUTF8Ctx(ctx context.Context, src io.Reader, dst io.Writer, outputUTF
 	return writer.Flush()
 }
 
-// UTF16ToUTF8Ctx converts UTF16 to UTF8.
+// UTF16ToUTF8 converts UTF-16 stream to UTF-8 stream.
 func UTF16ToUTF8(src io.Reader, dst io.Writer, outputUTF8BOM bool) error {
 	return UTF16ToUTF8Ctx(context.Background(), src, dst, outputUTF8BOM)
 }
 
+// UTF16ToStringCtx converts UTF-16 stream to string with context support.
 func UTF16ToStringCtx(ctx context.Context, src io.Reader) (string, error) {
 	buffer := bytes.NewBuffer([]byte{})
 	if err := UTF16ToUTF8Ctx(ctx, src, buffer, false); err != nil {
@@ -209,6 +214,7 @@ func UTF16ToStringCtx(ctx context.Context, src io.Reader) (string, error) {
 	return buffer.String(), nil
 }
 
+// UTF16ToString converts UTF-16 stream to string.
 func UTF16ToString(src io.Reader) (string, error) {
 	return UTF16ToStringCtx(context.Background(), src)
 }
