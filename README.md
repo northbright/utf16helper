@@ -3,8 +3,7 @@
 [![Build Status](https://travis-ci.org/northbright/utf16helper.svg?branch=master)](https://travis-ci.org/northbright/utf16helper)
 [![GoDoc](https://godoc.org/github.com/northbright/utf16helper?status.svg)](https://godoc.org/github.com/northbright/utf16helper)
 
-utf16helper is a [Golang](https://golang.org) package provide UTF16 helper functions.
-e.g. converts UTF-16 from / to UTF-8.
+utf16helper is a [Golang](https://golang.org) package which converts UTF-16 stream to / from UTF-8 stream.
 
 ## Documentation
 * [API References](https://godoc.org/github.com/northbright/utf16helper)

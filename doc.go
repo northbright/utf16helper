@@ -1,4 +1,4 @@
 /*
-Package utf16helper provides helper functions to convert UTF-16 from / to UTF-8.
+Package utf16helper provides converts UTF-16 stream to / from UTF-8 stream.
 */
 package utf16helper
