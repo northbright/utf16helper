@@ -105,7 +105,7 @@ func UTF8ToUTF16Ctx(ctx context.Context, src io.Reader, dst io.Writer) error {
 		return err
 	}
 
-	// If first rune is NOT UTF-8 BOM(0xEF,0xBB,0xBF -> rune: 0xFEFF),
+	// If first rune is NOT UTF-8 BOM(0xEF,0xBB,0xBF -> rune: U+FEFF),
 	// convert it to UTF-16 bytes, write the bytes.
 	if r != 0xFEFF {
 		b := RuneToUTF16Bytes(r)
