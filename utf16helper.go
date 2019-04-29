@@ -28,17 +28,19 @@ var (
 // DetectUTF16BOM detects the byte order in the BOM.
 // It returns nil , ErrNoUTF16BOM if no byte order detected in the BOM.
 func DetectUTF16BOM(r io.Reader) (binary.ByteOrder, error) {
-	var buf []byte
-
-	reader := bufio.NewReader(r)
+	var (
+		b   [1]byte
+		buf []byte
+	)
 
 	// Read first 2 bytes.
 	for i := 0; i < 2; i++ {
-		b, err := reader.ReadByte()
+		_, err := r.Read(b[0:1])
 		if err != nil {
 			return nil, err
 		}
-		buf = append(buf, b)
+
+		buf = append(buf, b[0])
 	}
 
 	switch {
